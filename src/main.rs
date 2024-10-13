@@ -1,6 +1,5 @@
 use std::collections::VecDeque;
 
-use rrpn::rpn_controller::exp::Exp;
 use rrpn::rpn_controller::stack_controller::{StackMachine, Typing};
 use rrpn::rpn_controller::state_controller::CalcState;
 

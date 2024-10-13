@@ -34,29 +34,4 @@ impl CalcState {
             Option::Some(y_val) => Result::Ok(f(new_stack.x, y_val)),
         }
     }
-
-    pub fn add(&mut self) -> Result<&mut Self, CalcStateFailure> {
-        let new_x = self.reduce_binary(|x, y| x + y)?;
-
-        let unshift_result = self.stack.unshift();
-
-        self.stack = StackMachine::EnteredValue(Entered {
-            x: new_x,
-            y: unshift_result.new_y,
-            rest: unshift_result.new_rest,
-        });
-
-        Result::Ok(self)
-    }
-
-    pub fn push(&mut self) -> Result<&mut Self, CalcStateFailure> {
-        let next_stack = self
-            .stack
-            .push()
-            .map_err(|err| CalcStateFailure::ParseFailure(err))?;
-
-        self.stack = next_stack;
-
-        Result::Ok(self)
-    }
 }

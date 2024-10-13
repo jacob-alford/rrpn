@@ -1,6 +1,9 @@
 [package]
 name = "rrpn"
 version = "0.1.0"
+authors = ["Jacob Alford"]
 edition = "2021"
 
 [dependencies]
+
+dioxus = { version = "0.5", features = ["web"] }

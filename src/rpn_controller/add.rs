@@ -1,14 +1,18 @@
-use crate::rpn_controller::stack_controller::StackMachine;
+use crate::rpn_controller::stack_controller::{Entered, StackMachine};
 
 use crate::rpn_controller::state_controller::{CalcState, CalcStateFailure};
 
 impl CalcState {
-    pub fn exp(&mut self) -> Result<&mut Self, CalcStateFailure> {
-        let mut new_stack = self.into_entered()?;
+    pub fn add(&mut self) -> Result<&mut Self, CalcStateFailure> {
+        let new_x = self.reduce_binary(|x, y| x + y)?;
 
-        new_stack.x = new_stack.x.exp();
+        let unshift_result = self.stack.unshift();
 
-        self.stack = StackMachine::EnteredValue(new_stack);
+        self.stack = StackMachine::EnteredValue(Entered {
+            x: new_x,
+            y: unshift_result.new_y,
+            rest: unshift_result.new_rest,
+        });
 
         Result::Ok(self)
     }
@@ -21,20 +25,20 @@ mod tests {
     use crate::rpn_controller::stack_controller::Entered;
 
     #[test]
-    fn it_exponentiates_zero() {
+    fn it_adds_two_numbers() {
         let mut state = CalcState {
             stack: StackMachine::EnteredValue(Entered {
-                x: 0.0,
-                y: Option::None,
+                x: 69.69,
+                y: Option::Some(420.42),
                 rest: vec![].into(),
             }),
         };
 
-        let result = state.exp();
+        let result = state.add();
 
         let mut expected: CalcState = CalcState {
             stack: StackMachine::EnteredValue(Entered {
-                x: 1.0,
+                x: 490.11,
                 y: Option::None,
                 rest: vec![].into(),
             }),
