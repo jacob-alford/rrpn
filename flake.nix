@@ -18,7 +18,7 @@
     in
     {
       devShell = pkgs.mkShell {
-        buildInputs = with pkgs; [ cargo rustc rust-analyzer git rustfmt ];
+        buildInputs = with pkgs; [ cargo rustc rust-analyzer git rustfmt nodejs_22 dioxus-cli llvmPackages.bintools wasm-bindgen-cli ];
       };
     });
 }

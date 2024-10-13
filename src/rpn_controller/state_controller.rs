@@ -1,4 +1,5 @@
 use core::num::ParseFloatError;
+use core::fmt;
 
 use crate::rpn_controller::stack_controller::{Entered, StackMachine};
 
@@ -11,6 +12,15 @@ pub struct CalcState {
 pub enum CalcStateFailure {
     ParseFailure(ParseFloatError),
     EmptyArgs(String),
+}
+
+impl fmt::Display for CalcState {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match &self.stack {
+            StackMachine::EnteringValue(typing) => write!(f, "{}", typing.buffer),
+            StackMachine::EnteredValue(entered) => write!(f, "{}", entered.x)
+        }
+    }
 }
 
 impl CalcState {
