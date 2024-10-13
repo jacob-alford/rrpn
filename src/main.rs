@@ -1,29 +1,23 @@
-#[derive(Debug)]
-enum Stack {
-  Empty,
-  X(f64),
-  XY(f64, f64, Vec<f64>),
-}
+use std::collections::VecDeque;
 
-#[derive(Debug)]
-struct CalcState {
-    stack: Stack
-}
+use rrpn::rpn_controller::exp::Exp;
+use rrpn::rpn_controller::stack_controller::{StackMachine, Typing};
+use rrpn::rpn_controller::state_controller::CalcState;
 
-impl CalcState {
-  fn exp(mut self) -> Self {
-    self.stack = match self.stack {
-        Stack::Empty => Stack::Empty,
-        Stack::X(x) => Stack::X(x.exp()),
-        Stack::XY(x, y, rest) => Stack::XY(x.exp(), y, rest)
+fn main() {
+    let mut foo = CalcState {
+        stack: StackMachine::EnteringValue(Typing {
+            buffer: "1.0".into(),
+            y: Option::None,
+            rest: VecDeque::from([]),
+        }),
     };
 
-    self
-  }
+    foo.push().unwrap();
+
+    foo.add().unwrap();
+
+    foo.exp().unwrap();
+
+    println!("{:#?}", foo);
 }
-
- fn main() {
-    let foo  = CalcState { stack: Stack::X(1.295) };
-
-    println!("{:#?}", foo.exp() );
- }
