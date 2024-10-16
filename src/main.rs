@@ -16,23 +16,98 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    let mut controller = use_signal(|| CalcState { 
+    let mut controller = use_signal(|| CalcState {
         stack: StackMachine::EnteringValue(Typing {
-            buffer: "1.0".into(),
+            buffer: "0".into(),
+            initial: true,
             y: Option::None,
-            rest: VecDeque::from([])
-        })
+            rest: VecDeque::from([]),
+        }),
     });
 
     rsx! {
         h1 { "RPN" }
-        button { "don't click me" }
-        button { 
+        button {
             onclick: move |_| {
                 controller.write().push().unwrap();
-            }, 
-            "enter" 
+            },
+            "enter"
         }
+        button {
+            onclick: move |_| {
+                controller.write().add().unwrap();
+            },
+            "add"
+        }
+        button {
+            onclick: move |_| {
+                controller.write().enter(1);
+            },
+            "1"
+        }
+        button {
+            onclick: move |_| {
+                controller.write().enter(2);
+            },
+            "2"
+        }
+
+        button {
+            onclick: move |_| {
+                controller.write().enter(3);
+            },
+            "3"
+        }
+
+        button {
+            onclick: move |_| {
+                controller.write().enter(4);
+            },
+            "4"
+        }
+
+        button {
+            onclick: move |_| {
+                controller.write().enter(5);
+            },
+            "5"
+        }
+
+        button {
+            onclick: move |_| {
+                controller.write().enter(6);
+            },
+            "6"
+        }
+
+        button {
+            onclick: move |_| {
+                controller.write().enter(7);
+            },
+            "7"
+        }
+
+        button {
+            onclick: move |_| {
+                controller.write().enter(8);
+            },
+            "8"
+        }
+
+        button {
+            onclick: move |_| {
+                controller.write().enter(9);
+            },
+            "9"
+        }
+
+        button {
+            onclick: move |_| {
+                controller.write().enter(0);
+            },
+            "0"
+        }
+
         p { "{controller:?}" }
     }
 }

@@ -11,6 +11,7 @@ pub struct Entered {
 #[derive(Debug, PartialEq)]
 pub struct Typing {
     pub buffer: String,
+    pub initial: bool,
     pub y: Option<f64>,
     pub rest: VecDeque<f64>,
 }
@@ -74,10 +75,65 @@ impl StackMachine {
             Option::Some(y) => entered_value.rest.push_front(y),
         }
 
-        Result::Ok(StackMachine::EnteredValue(Entered {
-            x: entered_value.x,
+        Result::Ok(StackMachine::EnteringValue(Typing {
+            buffer: entered_value.x.to_string(),
+            initial: true,
             y: Option::Some(entered_value.x),
             rest: entered_value.rest,
         }))
+    }
+
+    pub fn enter(&self, new_value: u8) -> Self {
+        match self {
+            StackMachine::EnteringValue(typing) => {
+                if typing.initial {
+                    StackMachine::EnteringValue(Typing {
+                        buffer: new_value.to_string().into(),
+                        y: typing.y,
+                        initial: false,
+                        rest: typing.rest.clone(),
+                    })
+                } else {
+                    if typing.buffer == "0" {
+                        return StackMachine::EnteringValue(Typing {
+                            buffer: new_value.to_string().into(),
+                            y: typing.y,
+                            initial: false,
+                            rest: typing.rest.clone()
+                        })
+                    } else {
+                        
+                        let mut typing_value = typing.buffer.clone();
+
+                        typing_value.push_str(&new_value.to_string());
+
+                        return StackMachine::EnteringValue(Typing {
+                            buffer: typing_value.into(),
+                            y: typing.y,
+                            initial: false,
+                            rest: typing.rest.clone(),
+                        });
+                    }
+
+                }
+            }
+            StackMachine::EnteredValue(entered) => {
+                let typing_value = new_value.to_string();
+
+                let mut new_rest = entered.rest.clone();
+
+                match entered.y {
+                    Option::None => (),
+                    Option::Some(new_y) => new_rest.push_front(new_y),
+                };
+
+                StackMachine::EnteringValue(Typing {
+                    buffer: typing_value.into(),
+                    y: Option::Some(entered.x),
+                    initial: true,
+                    rest: new_rest,
+                })
+            }
+        }
     }
 }

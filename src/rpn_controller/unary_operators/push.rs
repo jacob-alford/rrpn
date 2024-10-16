@@ -17,7 +17,7 @@ impl CalcState {
 mod tests {
     use super::*;
 
-    use crate::rpn_controller::stack_controller::{Entered, StackMachine};
+    use crate::rpn_controller::stack_controller::{Entered, Typing, StackMachine};
 
     #[test]
     fn it_pushes_to_the_stack() {
@@ -34,8 +34,9 @@ mod tests {
         let result = state.push();
 
         let mut expected: CalcState = CalcState {
-            stack: StackMachine::EnteredValue(Entered {
-                x: 256.0,
+            stack: StackMachine::EnteringValue(Typing {
+                buffer: "256".into(),
+                initial: true,
                 y: Option::Some(256.0),
                 rest: vec![256.0].into(),
             }),
