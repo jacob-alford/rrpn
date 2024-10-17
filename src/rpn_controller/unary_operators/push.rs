@@ -17,7 +17,7 @@ impl CalcState {
 mod tests {
     use super::*;
 
-    use crate::rpn_controller::stack_controller::{Entered, Typing, StackMachine};
+    use crate::rpn_controller::stack_controller::{Entered, StackMachine, Typing};
 
     #[test]
     fn it_pushes_to_the_stack() {

@@ -86,6 +86,7 @@ impl StackMachine {
     pub fn enter(&self, new_value: u8) -> Self {
         match self {
             StackMachine::EnteringValue(typing) => {
+                // Will replace cloned buffer with new value is newly entered
                 if typing.initial {
                     StackMachine::EnteringValue(Typing {
                         buffer: new_value.to_string().into(),
@@ -94,15 +95,16 @@ impl StackMachine {
                         rest: typing.rest.clone(),
                     })
                 } else {
+                    // Does not concat leading zeros
                     if typing.buffer == "0" {
                         return StackMachine::EnteringValue(Typing {
                             buffer: new_value.to_string().into(),
                             y: typing.y,
                             initial: false,
-                            rest: typing.rest.clone()
-                        })
+                            rest: typing.rest.clone(),
+                        });
+                    // Types new value
                     } else {
-                        
                         let mut typing_value = typing.buffer.clone();
 
                         typing_value.push_str(&new_value.to_string());
@@ -114,9 +116,9 @@ impl StackMachine {
                             rest: typing.rest.clone(),
                         });
                     }
-
                 }
             }
+            // Converts to typing and pushes value to the stack, replicates value for x
             StackMachine::EnteredValue(entered) => {
                 let typing_value = new_value.to_string();
 
