@@ -15,32 +15,22 @@ impl CalcState {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
-    use crate::rpn_controller::stack_controller::{Entered, StackMachine, Typing};
+    use crate::rpn_controller::state_controller::{EnteredBuilder, TypingBuilder};
 
     #[test]
     fn it_pushes_to_the_stack() {
-        let mut state = CalcState {
-            stack: StackMachine::EnteredValue(Entered {
-                x: 256.0,
-                y: Option::None,
-                rest: vec![].into(),
-            }),
-        };
+        let mut state = EnteredBuilder::empty().finalize(256.0);
 
         let _ = state.push();
 
         let result = state.push();
 
-        let mut expected: CalcState = CalcState {
-            stack: StackMachine::EnteringValue(Typing {
-                buffer: "256".into(),
-                initial: true,
-                y: Option::Some(256.0),
-                rest: vec![256.0].into(),
-            }),
-        };
+        let mut expected = TypingBuilder::empty()
+            .add_buffer("256")
+            .add_initial(true)
+            .add_y(256.0)
+            .add_rest(vec![256.0])
+            .finalize();
 
         assert_eq!(result, Result::Ok(&mut expected))
     }

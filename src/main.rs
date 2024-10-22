@@ -1,12 +1,9 @@
 #![allow(non_snake_case)]
 
-use std::collections::VecDeque;
-
 use dioxus::prelude::*;
 use dioxus_logger::tracing::{info, Level};
 
-use rrpn::rpn_controller::stack_controller::{StackMachine, Typing};
-use rrpn::rpn_controller::state_controller::CalcState;
+use rrpn::rpn_controller::state_controller::TypingBuilder;
 
 fn main() {
     dioxus_logger::init(Level::INFO).expect("failed to init logger");
@@ -16,14 +13,7 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    let mut controller = use_signal(|| CalcState {
-        stack: StackMachine::EnteringValue(Typing {
-            buffer: "0".into(),
-            initial: true,
-            y: Option::None,
-            rest: VecDeque::from([]),
-        }),
-    });
+    let mut controller = use_signal(|| TypingBuilder::empty().finalize());
 
     rsx! {
         h1 { "RPN" }
@@ -35,10 +25,47 @@ fn App() -> Element {
         }
         button {
             onclick: move |_| {
+                controller.write().swap().unwrap();
+            },
+            "swap"
+        }
+
+        button {
+            onclick: move |_| {
                 controller.write().add().unwrap();
             },
             "add"
         }
+
+        button {
+            onclick: move |_| {
+                controller.write().sub().unwrap();
+            },
+            "sub"
+        }
+
+        button {
+            onclick: move |_| {
+                controller.write().mul().unwrap();
+            },
+            "mul"
+        }
+
+
+        button {
+            onclick: move |_| {
+                controller.write().div().unwrap();
+            },
+            "div"
+        }
+
+        button {
+            onclick: move |_| {
+                controller.write().sin().unwrap();
+            },
+            "sin"
+        }
+
         button {
             onclick: move |_| {
                 controller.write().enter(1);
@@ -106,6 +133,13 @@ fn App() -> Element {
                 controller.write().enter(0);
             },
             "0"
+        }
+
+        button {
+            onclick: move |_| {
+                controller.write().enter_dec().unwrap();
+            },
+            "."
         }
 
         p { "{controller:?}" }

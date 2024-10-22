@@ -132,9 +132,56 @@ impl StackMachine {
                 StackMachine::EnteringValue(Typing {
                     buffer: typing_value.into(),
                     y: Option::Some(entered.x),
-                    initial: true,
+                    initial: false,
                     rest: new_rest,
                 })
+            }
+        }
+    }
+
+    pub fn enter_dec(&self) -> Result<Self, String> {
+        match self {
+            StackMachine::EnteringValue(typing) => {
+                // Will replace cloned buffer with new value is newly entered
+                if typing.initial {
+                    return Result::Ok(StackMachine::EnteringValue(Typing {
+                        buffer: "0.".into(),
+                        y: typing.y,
+                        initial: false,
+                        rest: typing.rest.clone(),
+                    }));
+                } else {
+                    if typing.buffer.contains(".") {
+                        return Result::Err("Already a decimal".into());
+                    } else {
+                        let mut typing_value = typing.buffer.clone();
+
+                        typing_value.push_str(".");
+
+                        return Result::Ok(StackMachine::EnteringValue(Typing {
+                            buffer: typing_value.into(),
+                            y: typing.y,
+                            initial: false,
+                            rest: typing.rest.clone(),
+                        }));
+                    }
+                }
+            }
+            // Converts to typing and pushes value to the stack, replicates value for x
+            StackMachine::EnteredValue(entered) => {
+                let mut new_rest = entered.rest.clone();
+
+                match entered.y {
+                    Option::None => (),
+                    Option::Some(new_y) => new_rest.push_front(new_y),
+                };
+
+                Result::Ok(StackMachine::EnteringValue(Typing {
+                    buffer: "0.".into(),
+                    y: Option::Some(entered.x),
+                    initial: false,
+                    rest: new_rest,
+                }))
             }
         }
     }

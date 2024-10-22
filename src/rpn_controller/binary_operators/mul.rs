@@ -3,8 +3,8 @@ use crate::rpn_controller::stack_controller::{Entered, StackMachine};
 use crate::rpn_controller::state_controller::{CalcState, CalcStateFailure};
 
 impl CalcState {
-    pub fn add(&mut self) -> Result<&mut Self, CalcStateFailure> {
-        let new_x = self.reduce_binary(|x, y| x + y)?;
+    pub fn mul(&mut self) -> Result<&mut Self, CalcStateFailure> {
+        let new_x = self.reduce_binary(|x, y| x * y)?;
 
         let unshift_result = self.stack.unshift();
 
@@ -23,12 +23,12 @@ mod tests {
     use crate::rpn_controller::state_controller::EnteredBuilder;
 
     #[test]
-    fn it_adds_two_numbers() {
+    fn it_multiplies_two_numbers() {
         let mut state = EnteredBuilder::empty().add_y(420.42).finalize(69.69);
 
-        let result = state.add();
+        let result = state.mul();
 
-        let mut expected = EnteredBuilder::empty().finalize(490.11);
+        let mut expected = EnteredBuilder::empty().finalize(29299.0698);
 
         assert_eq!(result, Result::Ok(&mut expected))
     }
